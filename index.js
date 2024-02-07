@@ -3,11 +3,11 @@ const cors = require('cors');
 const { Stripe_Prebuild_checkout } = require('./Stripe')
 require('dotenv').config()
 
-app.use(cors());
+
 
 const express = require('express')
 const app = express()
-
+app.use(cors());
 app.listen(3001, () => {
     console.log(`Server running at ${process.env.APP_SERVER_DOMAIN_URL}`)
 })
