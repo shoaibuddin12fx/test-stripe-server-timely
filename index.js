@@ -20,3 +20,8 @@ app.get('/create-checkout-session', async (_, res) => {
     const url = await Stripe_Prebuild_checkout()
     res.redirect(303, url)
 })
+
+app.post('/stripe-checkout-session', async (_, res) => {
+    const url = await Stripe_Prebuild_checkout()
+    res.redirect(303, url)
+})
