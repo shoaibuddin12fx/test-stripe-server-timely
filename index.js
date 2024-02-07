@@ -1,5 +1,10 @@
+const cors = require('cors');
+
 const { Stripe_Prebuild_checkout } = require('./Stripe')
 require('dotenv').config()
+
+app.use(cors());
+
 const express = require('express')
 const app = express()
 
