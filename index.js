@@ -8,7 +8,7 @@ app.listen(3001, () => {
 })
 
 app.get('/', (_, res) => {
-    res.redirect(308, `${process.env.APP_SERVER_DOMAIN_URL}/create-checkout-session`)
+    res.redirect(308, `/create-checkout-session`)
 })
 
 app.get('/create-checkout-session', async (_, res) => {
