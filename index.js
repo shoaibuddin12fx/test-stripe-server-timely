@@ -11,7 +11,9 @@ const app = express()
 
 const corsOptions = {
     origin:"https://localhost:3000",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",};
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "Access-Control-Allow-Origin": "*"
+};
   app.use(cors(corsOptions));
 
 app.listen(3001, () => {
