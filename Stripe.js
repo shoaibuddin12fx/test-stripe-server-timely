@@ -1,5 +1,5 @@
 require("dotenv").config()
-const stripe = require('stripe')("sk_test_4eC39HqLyjWDarjtT1zdp7dc")
+const stripe = require('stripe')("pk_test_TYooMQauvdEDq54NiTphI7jx")
 
 const Stripe_Prebuild_checkout = async () => {
     const session = await stripe.checkout.sessions.create({
