@@ -19,7 +19,7 @@ const Stripe_Prebuild_checkout = async () => {
         success_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}?success=true`,
         cancel_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}?canceled=true`,
     })
-    return session.url
+    return { clientSecret: session.client_secret }
 }
 
 module.exports = { Stripe_Prebuild_checkout }

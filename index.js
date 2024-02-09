@@ -17,8 +17,8 @@ app.get('/', (_, res) => {
 })
 
 app.get('/create-checkout-session', async (_, res) => {
-    const url = await Stripe_Prebuild_checkout()
-    res.redirect(303, url)
+    const data = await Stripe_Prebuild_checkout()
+    res.json(data);
 })
 
 app.post('/stripe-checkout-session', async (_, res) => {
