@@ -10,8 +10,8 @@ const Stripe_Prebuild_checkout = async () => {
         setTimeout( async () => {
 
             let obj = {
-                success_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}?success=true`,
-                cancel_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}?canceled=true`,
+                success_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}/stripe-checkout-success`,
+                cancel_url: `${process.env.REACT_APP_CLIENT_DOMAIN_URL}/stripe-checkout-failure`,
             }
             resolve(obj);
             // const session = await stripe.checkout.sessions.create({

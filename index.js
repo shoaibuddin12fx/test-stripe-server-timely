@@ -40,9 +40,9 @@ app.listen(3001, () => {
     console.log(`Server running at ${process.env.APP_SERVER_DOMAIN_URL}`)
 })
 
-app.get('/', (_, res) => {
-    res.redirect(308, `/create-checkout-session`)
-})
+// app.get('/', (_, res) => {
+//     res.redirect(308, `/create-checkout-session`)
+// })
 
 app.get('/create-checkout-session', async (_, res) => {
     const data = await Stripe_Prebuild_checkout()
@@ -53,3 +53,36 @@ app.post('/stripe-checkout-session', async (_, res) => {
     const url = await Stripe_Prebuild_checkout()
     res.redirect(303, url)
 })
+
+app.get('/stripe-checkout-success', async (req, res) => {
+    const sessionId = req.query.session_id;
+  
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+  
+      // Check if the payment was successful
+      if (session.payment_status === 'paid') {
+        // Update your application state or handle other success-related logic
+        res.send('Payment successful!');
+      } else {
+        res.send('Payment not successful.');
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error retrieving session information.');
+    }
+  });
+  
+  app.get('/stripe-checkout-failure', async (req, res) => {
+    const sessionId = req.query.session_id;
+  
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+  
+      // Handle cancellation or failure logic
+      res.send(`Payment canceled or failed: ${session.payment_status}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error retrieving session information.');
+    }
+  });
