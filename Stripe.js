@@ -1,5 +1,5 @@
 require("dotenv").config()
-const stripe = require('stripe')(process.env.REACT_APP_API_KEY_STRIPE)
+const stripe = require('stripe')("sk_test_4eC39HqLyjWDarjtT1zdp7dc")
 
 const Stripe_Prebuild_checkout = async () => {
     const session = await stripe.checkout.sessions.create({
