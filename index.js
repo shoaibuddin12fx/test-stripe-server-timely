@@ -7,7 +7,13 @@ require('dotenv').config()
 
 const express = require('express')
 const app = express()
-app.use(cors());
+
+
+const corsOptions = {
+    origin:"https://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",};
+  app.use(cors(corsOptions));
+
 app.listen(3001, () => {
     console.log(`Server running at ${process.env.APP_SERVER_DOMAIN_URL}`)
 })
