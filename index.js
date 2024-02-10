@@ -44,6 +44,11 @@ app.listen(3001, () => {
 //     res.redirect(308, `/create-checkout-session`)
 // })
 
+app.get('/get-stripe-products', async (_, res) => {
+  
+  res.json(data);
+})
+
 app.get('/create-checkout-session', async (_, res) => {
     const data = await Stripe_Prebuild_checkout()
     res.json(data);
