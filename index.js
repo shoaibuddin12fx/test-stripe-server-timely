@@ -46,7 +46,7 @@ app.listen(3001, () => {
 
 app.get('/get-stripe-products', async (_, res) => {
   const data = await getStripeProducts()
-  res.send(data);
+  res.json(data);
 })
 
 app.post('/create-subscription', async (req, res) => {
