@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 require("dotenv").config();
 const stripe = require("stripe")(
   "sk_test_51OeglILUeFL12yLIIDqRbiKaP8KQg2xRctXCPWO6Fm1rcWMFsbqJG18bBZHojNhb2cOJL5pHUY7KSJoeH7wCVyAy00SowCyTUT"
@@ -45,28 +47,87 @@ const getStripeProducts = async () => {
         return { ...product, prices: prices.data };
       })
     );
-    
+
     resolve(productsWithPrices);
   });
+};
+const getClientSecret = async (res) => {
+  try {
+    const setupIntent = await stripe.setupIntents.create({
+      usage: "off_session",
+    });
+
+    res.json({ clientSecret: setupIntent.client_secret });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 const postCreateSubscription = async (req) => {
   return new Promise(async (resolve) => {
     try {
-      const { productId, paymentMethodId } = req.body;
+      const { price, PaymentMethod, email } = req.body;
 
-      const subscription = await stripe.subscriptions.create({
-        items: [{ price: productId }],
-        default_payment_method: paymentMethodId,
-        // Add other subscription parameters as needed
+      // Check if a customer with the given email already exists
+      const existingCustomers = await stripe.customers.list({
+        email: email,
+        limit: 1,
       });
 
-      res.status(200).json({ subscription });
+      let customer;
+      if (existingCustomers.data.length > 0) {
+        customer = existingCustomers.data[0];
+      } else {
+        customer = await stripe.customers.create({
+          email: email,
+        });
+      }
+      console.log('====================================');
+      console.log(customer);
+      console.log('====================================');
+      await stripe.paymentMethods.attach(PaymentMethod, { customer: customer.id });
+
+      // Create the subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{ price: price }],
+        default_payment_method: PaymentMethod,
+      });
+
+      console.log(subscription, "Subscription created successfully");
+
+      resolve(subscription);
     } catch (error) {
       console.error("Error creating subscription:", error);
-      res.status(500).json({ error: "Subscription creation failed" });
+      resolve({ error: error });
     }
   });
 };
 
-module.exports = { Stripe_Prebuild_checkout, getStripeProducts, postCreateSubscription };
+
+const processPayment = async (req) => {
+  return new Promise(async (resolve) => {
+    try {
+      const paymentIntent = await stripe.paymentIntents.create({
+        payment_method: paymentMethodId,
+        amount: 1000,
+        currency: "usd",
+        confirmation_method: "manual",
+        confirm: true,
+      });
+
+      res.json({ client_secret: paymentIntent.client_secret });
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      res.status(500).send({ error: "Payment failed" });
+    }
+  });
+};
+module.exports = {
+  Stripe_Prebuild_checkout,
+  getStripeProducts,
+  postCreateSubscription,
+  getClientSecret,
+  processPayment,
+};

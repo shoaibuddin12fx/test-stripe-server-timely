@@ -1,13 +1,13 @@
 const cors = require('cors');
 
-const { Stripe_Prebuild_checkout, getStripeProducts, postCreateSubscription } = require('./Stripe')
+const { Stripe_Prebuild_checkout, getStripeProducts, postCreateSubscription,getClientSecret, processPayment } = require('./Stripe')
 require('dotenv').config()
 
 
 
 const express = require('express')
 const app = express()
-
+app.use(express.json()); 
 
 app.use(function(req, res, next) {
     var oneof = false;
@@ -49,12 +49,21 @@ app.get('/get-stripe-products', async (_, res) => {
   res.json(data);
 })
 
+app.get('/get-client-secret', async (req, res) => {
+  await getClientSecret(res);
+});
+
+
 app.post('/create-subscription', async (req, res) => {
+  const data = await postCreateSubscription(req, res);
+  res.json(data);
+});
 
-  const data = await postCreateSubscription(req)
-  res.send(data);
+app.post('/process-payment', async (req, res) => {
+  await processPayment(req, res);
+});
 
-})
+
 
 app.get('/create-checkout-session', async (_, res) => {
     const data = await Stripe_Prebuild_checkout()
