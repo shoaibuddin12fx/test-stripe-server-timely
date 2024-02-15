@@ -69,6 +69,13 @@ const postCreateSubscription = async (req) => {
     try {
       const { price, PaymentMethod, email } = req.body;
 
+      // Check if any required field is missing
+      if (!price || !PaymentMethod || !email) {
+        console.error("Error: Missing required fields");
+        resolve({ ok: false, error: "Missing required fields" });
+        return;
+      }
+
       // Check if a customer with the given email already exists
       const existingCustomers = await stripe.customers.list({
         email: email,
@@ -83,12 +90,9 @@ const postCreateSubscription = async (req) => {
           email: email,
         });
       }
-      console.log('====================================');
-      console.log(customer);
-      console.log('====================================');
-      await stripe.paymentMethods.attach(PaymentMethod, { customer: customer.id });
-
-      // Create the subscription
+      await stripe.paymentMethods.attach(PaymentMethod, {
+        customer: customer.id,
+      });
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{ price: price }],
@@ -97,14 +101,13 @@ const postCreateSubscription = async (req) => {
 
       console.log(subscription, "Subscription created successfully");
 
-      resolve(subscription);
+      resolve({ ok: true, subscription });
     } catch (error) {
       console.error("Error creating subscription:", error);
-      resolve({ error: error });
+      resolve({ ok: false });
     }
   });
 };
-
 
 const processPayment = async (req) => {
   return new Promise(async (resolve) => {
