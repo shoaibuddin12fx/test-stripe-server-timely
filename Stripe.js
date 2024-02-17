@@ -153,6 +153,26 @@ const getStripeSubscriptions = async (email) => {
   });
 };
 
+const cancelStripeSubscription = async (subscriptionId) => {
+  return new Promise(async (resolve) => {
+    try {
+      const canceledSubscription  = await stripe.subscriptions.del(subscriptionId);
+
+      if (canceledSubscription) {       
+        resolve({ ok: true, subscriptions: canceledSubscription });
+      } else {
+        resolve({ ok: false, error: "Subscription not found" });
+      }
+    } catch (error) {
+      console.error("Error getting subscriptions:", error);
+      resolve({ ok: false });
+    }
+  });
+};
+
+
+
+
 module.exports = {
   Stripe_Prebuild_checkout,
   getStripeProducts,
@@ -160,4 +180,5 @@ module.exports = {
   getClientSecret,
   processPayment,
   getStripeSubscriptions,
+  cancelStripeSubscription
 };
