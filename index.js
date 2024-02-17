@@ -114,7 +114,7 @@ app.get("/stripe-checkout-failure", async (req, res) => {
   }
 });
 
-app.get("/get-stripe-subscriptions", async (req, res) => {
+app.post("/get-stripe-subscriptions", async (req, res) => {
   const { email } = req.query;
 
   try {
