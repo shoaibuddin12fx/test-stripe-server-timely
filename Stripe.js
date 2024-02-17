@@ -127,10 +127,37 @@ const processPayment = async (req) => {
     }
   });
 };
+
+const getStripeSubscriptions = async (email) => {
+  return new Promise(async (resolve) => {
+    try {
+      const existingCustomers = await stripe.customers.list({
+        email: email,
+        limit: 1,
+      });
+
+      if (existingCustomers.data.length > 0) {
+        const customer = existingCustomers.data[0];
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customer.id,
+        });
+
+        resolve({ ok: true, subscriptions: subscriptions.data });
+      } else {
+        resolve({ ok: false, error: "Customer not found" });
+      }
+    } catch (error) {
+      console.error("Error getting subscriptions:", error);
+      resolve({ ok: false });
+    }
+  });
+};
+
 module.exports = {
   Stripe_Prebuild_checkout,
   getStripeProducts,
   postCreateSubscription,
   getClientSecret,
   processPayment,
+  getStripeSubscriptions,
 };
