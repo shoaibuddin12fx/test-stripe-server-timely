@@ -154,8 +154,8 @@ app.post("/cancel-stripe-subscription", async (req, res) => {
     const result = await cancelStripeSubscription(subscriptionId);
 
     if (result.ok) {
-      const subscription = result.subscriptions;
-      return res.json({ ok: true, subscription });
+      const subscriptions = result.subscriptions;
+      return res.json({ ok: true, subscriptions });
     } else {
       return res
         .status(404)
