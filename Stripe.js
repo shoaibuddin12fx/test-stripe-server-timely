@@ -67,7 +67,7 @@ const getClientSecret = async (res) => {
 const postCreateSubscription = async (req) => {
   return new Promise(async (resolve) => {
     try {
-      const { price, PaymentMethod, email } = req.body;
+      const { price, PaymentMethod, email, quantity } = req.body;
 
       // Check if any required field is missing
       if (!price || !PaymentMethod || !email) {
@@ -95,7 +95,7 @@ const postCreateSubscription = async (req) => {
       });
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
-        items: [{ price: price }],
+        items: [{ price: price, quantity: quantity }],
         default_payment_method: PaymentMethod,
       });
 
