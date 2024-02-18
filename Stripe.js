@@ -170,6 +170,30 @@ const cancelStripeSubscription = async (subscriptionId) => {
   });
 };
 
+const updateStripeSubscription = async (subscriptionId, itemId, quantity) => {
+    return new Promise(async (resolve) => {
+      try {
+        const updateSubscription  = await stripe.subscriptions.update(subscriptionId, {
+            items: [
+                {
+                    id: itemId, // Replace with the subscription item ID, which you can retrieve from the subscription
+                    quantity: quantity,
+                }
+            ]
+        });
+  
+        if (updateSubscription) {       
+          resolve({ ok: true, subscriptions: updateSubscription });
+        } else {
+          resolve({ ok: false, error: "Subscription not found" });
+        }
+      } catch (error) {
+        console.error("Error getting subscriptions:", error);
+        resolve({ ok: false });
+      }
+    });
+  };
+
 
 
 
@@ -180,5 +204,6 @@ module.exports = {
   getClientSecret,
   processPayment,
   getStripeSubscriptions,
-  cancelStripeSubscription
+  cancelStripeSubscription,
+  updateStripeSubscription
 };
