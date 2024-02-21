@@ -1,7 +1,6 @@
 const { response } = require("express");
 
 require("dotenv").config();
-
 const stripe = require("stripe")(
   "sk_test_51OeglILUeFL12yLIIDqRbiKaP8KQg2xRctXCPWO6Fm1rcWMFsbqJG18bBZHojNhb2cOJL5pHUY7KSJoeH7wCVyAy00SowCyTUT"
 );
@@ -52,7 +51,6 @@ const getStripeProducts = async () => {
     resolve(productsWithPrices);
   });
 };
-
 const getClientSecret = async (res) => {
   try {
     const setupIntent = await stripe.setupIntents.create({
@@ -154,7 +152,6 @@ const getStripeSubscriptions = async (email) => {
     }
   });
 };
-
 const getSubscriptionStatus = async (subscriptionId) => {
   return new Promise(async (resolve) => {
     try {
@@ -174,6 +171,7 @@ const getSubscriptionStatus = async (subscriptionId) => {
     }
   });
 };
+
 
 const cancelStripeSubscription = async (subscriptionId) => {
   return new Promise(async (resolve) => {
@@ -198,7 +196,7 @@ const updateStripeSubscription = async (subscriptionId, itemId, quantity) => {
         const updateSubscription  = await stripe.subscriptions.update(subscriptionId, {
             items: [
                 {
-                    id: itemId,
+                    id: itemId, // Replace with the subscription item ID, which you can retrieve from the subscription
                     quantity: quantity,
                 }
             ]
@@ -215,6 +213,9 @@ const updateStripeSubscription = async (subscriptionId, itemId, quantity) => {
       }
     });
   };
+
+
+
 
 module.exports = {
   Stripe_Prebuild_checkout,

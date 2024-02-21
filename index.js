@@ -53,6 +53,10 @@ app.listen(3001, () => {
   console.log(`Server running at ${process.env.APP_SERVER_DOMAIN_URL}`);
 });
 
+// app.get('/', (_, res) => {
+//     res.redirect(308, `/create-checkout-session`)
+// })
+
 app.get("/get-stripe-products", async (_, res) => {
   const data = await getStripeProducts();
   res.json(data);
@@ -110,7 +114,10 @@ app.get("/stripe-checkout-success", async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    // Check if the payment was successful
     if (session.payment_status === "paid") {
+      // Update your application state or handle other success-related logic
       res.send("Payment successful!");
     } else {
       res.send("Payment not successful.");
@@ -126,6 +133,8 @@ app.get("/stripe-checkout-failure", async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    // Handle cancellation or failure logic
     res.send(`Payment canceled or failed: ${session.payment_status}`);
   } catch (error) {
     console.error(error);
@@ -135,6 +144,7 @@ app.get("/stripe-checkout-failure", async (req, res) => {
 
 app.post("/get-stripe-subscriptions", async (req, res) => {
   const { email } = req.body;
+
   try {
     if (!email) {
       return res.status(400).send("Email is required.");
