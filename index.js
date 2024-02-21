@@ -2,6 +2,7 @@ const cors = require("cors");
 
 const {
   Stripe_Prebuild_checkout,
+  getSubscriptionStatus,
   getStripeProducts,
   postCreateSubscription,
   getClientSecret,
@@ -77,6 +78,30 @@ app.get("/create-checkout-session", async (_, res) => {
   const data = await Stripe_Prebuild_checkout();
   res.json(data);
 });
+
+app.post("/get-subscription-status", async (req, res) => {
+  try {
+    const { subscriptionId } = req.body;
+
+    // Check if subscriptionId is provided
+    if (!subscriptionId) {
+      return res.status(400).json({ error: "Subscription ID is required." });
+    }
+
+    // Call the function to get subscription status based on the subscriptionId
+    const subscriptionStatus = await getSubscriptionStatus(subscriptionId);
+
+    if (subscriptionStatus.ok) {
+      res.json({ ok: true, status: subscriptionStatus });
+    } else {
+      res.status(404).json({ ok: false, error: "Subscription not found" });
+    }
+  } catch (error) {
+    console.error("Error getting subscription status:", error);
+    res.status(500).json({ ok: false, error: "Internal Server Error" });
+  }
+});
+
 
 app.post("/stripe-checkout-session", async (_, res) => {
   const url = await Stripe_Prebuild_checkout();

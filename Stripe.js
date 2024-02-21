@@ -152,6 +152,26 @@ const getStripeSubscriptions = async (email) => {
     }
   });
 };
+const getSubscriptionStatus = async (subscriptionId) => {
+  return new Promise(async (resolve) => {
+    try {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+      if (subscription) {
+        const status = subscription.status;
+        const quantity = subscription.quantity;
+
+        resolve({ ok: true, status, quantity });
+      } else {
+        resolve({ ok: false });
+      }
+    } catch (error) {
+      console.error("Error retrieving subscription:", error);
+      resolve({ ok: false });
+    }
+  });
+};
+
 
 const cancelStripeSubscription = async (subscriptionId) => {
   return new Promise(async (resolve) => {
@@ -180,5 +200,7 @@ module.exports = {
   getClientSecret,
   processPayment,
   getStripeSubscriptions,
+  getSubscriptionStatus,
   cancelStripeSubscription
+
 };
