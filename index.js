@@ -8,7 +8,8 @@ const {
   getClientSecret,
   processPayment,
   getStripeSubscriptions,
-  cancelStripeSubscription
+  cancelStripeSubscription,
+  updateStripeSubscription
 } = require("./Stripe");
 require("dotenv").config();
 
@@ -194,4 +195,31 @@ app.post("/cancel-stripe-subscription", async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 });
+
+app.post("/update-stripe-subscription", async (req, res) => {
+    const { subscriptionId, itemId, quantity } = req.body;
+  
+    try {
+      if (!subscriptionId) {
+        return res.status(400).send("Subscription ID is required.");
+      }
+  
+      const result = await updateStripeSubscription(subscriptionId, itemId, quantity);
+  
+      if (result.ok) {
+        const subscriptions = result.subscriptions;
+        return res.json({ ok: true, subscriptions });
+      } else {
+        return res
+          .status(404)
+          .json({
+            ok: false,
+            error: "Subscription not found or error getting subscriptions.",
+          });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
+    }
+  });
 

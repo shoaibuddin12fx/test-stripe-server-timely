@@ -67,7 +67,7 @@ const getClientSecret = async (res) => {
 const postCreateSubscription = async (req) => {
   return new Promise(async (resolve) => {
     try {
-      const { price, PaymentMethod, email } = req.body;
+      const { price, PaymentMethod, email, quantity } = req.body;
 
       // Check if any required field is missing
       if (!price || !PaymentMethod || !email) {
@@ -95,7 +95,7 @@ const postCreateSubscription = async (req) => {
       });
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
-        items: [{ price: price }],
+        items: [{ price: price, quantity: quantity }],
         default_payment_method: PaymentMethod,
       });
 
@@ -190,6 +190,30 @@ const cancelStripeSubscription = async (subscriptionId) => {
   });
 };
 
+const updateStripeSubscription = async (subscriptionId, itemId, quantity) => {
+    return new Promise(async (resolve) => {
+      try {
+        const updateSubscription  = await stripe.subscriptions.update(subscriptionId, {
+            items: [
+                {
+                    id: itemId, // Replace with the subscription item ID, which you can retrieve from the subscription
+                    quantity: quantity,
+                }
+            ]
+        });
+  
+        if (updateSubscription) {       
+          resolve({ ok: true, subscriptions: updateSubscription });
+        } else {
+          resolve({ ok: false, error: "Subscription not found" });
+        }
+      } catch (error) {
+        console.error("Error getting subscriptions:", error);
+        resolve({ ok: false });
+      }
+    });
+  };
+
 
 
 
@@ -201,6 +225,6 @@ module.exports = {
   processPayment,
   getStripeSubscriptions,
   getSubscriptionStatus,
-  cancelStripeSubscription
-
+  cancelStripeSubscription,
+  updateStripeSubscription
 };
