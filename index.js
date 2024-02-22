@@ -1,4 +1,7 @@
 const cors = require("cors");
+require("dotenv").config();
+const FirebaseService  = require('./services/firebaseService');
+const firebaseServiceInstance = new FirebaseService();
 
 const {
   Stripe_Prebuild_checkout,
@@ -56,6 +59,9 @@ app.listen(3001, () => {
 // app.get('/', (_, res) => {
 //     res.redirect(308, `/create-checkout-session`)
 // })
+
+
+// Stripe Routes
 
 app.get("/get-stripe-products", async (_, res) => {
   const data = await getStripeProducts();
@@ -223,3 +229,15 @@ app.post("/update-stripe-subscription", async (req, res) => {
     }
   });
 
+
+// Firebase Routes
+
+app.post("/status-changed", async (req, res) => {
+  try {
+    // Use the admin object from FirebaseService for Firebase operations
+    const data = await firebaseServiceInstance.getDataFromFirebase(req.body);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
