@@ -4,13 +4,13 @@ const serviceAccount = require("../serviceAccount.json");
 class FirebaseService {
   constructor() {
     this.firebaseConfig = {
-      apiKey: "AIzaSyDeUhZOQhygbAlTm_nmziF12_O3tpPFvdU",
-      authDomain: "timee-dc4ed.firebaseapp.com",
-      projectId: "timee-dc4ed",
-      storageBucket: "timee-dc4ed.appspot.com",
-      messagingSenderId: "896100934797",
-      appId: "1:896100934797:web:5710cd3a7c58387ba82ec4",
-      measurementId: "G-38K2DX2FDV",
+      apiKey: process.env.API_KEY,
+      authDomain: process.env.AUTH_DOMAIN,
+      projectId: process.env.PROJECT_ID,
+      storageBucket: process.env.STORAGE_BUCKET,
+      messagingSenderId: process.env.MESSAGING_SERVICE_ID,
+      appId: process.env.APP_ID,
+      measurementId: process.env.MEASUREMENT_ID,
     };
     
 
